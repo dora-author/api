@@ -1,0 +1,247 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'OpenAPI 가이드'
+  description: |
+    [토스페이먼츠](https://www.tosspayments.com/)에서 제공하는 OpenAPIs를 사용하기 위한 가이드입니다.
+
+    **Change History**
+
+      | Version | Date         | Description     | Author      |
+      | :------ | :----------- | :-------------- | :---------- |
+      | 1.0.0   | 2022. 7. 13. | Initial release | Eunjung Kim |
+
+    **본 가이드의 대상 독자** 
+
+      OpenAPI를 사용하는 클라이언트 측 개발자 혹은 사용자 
+
+    **API 개요**
+
+      클라이언트 측 개발자가 API를 요청하고 응답을 받기 위하여 결제 API에서 정의되어야 할 주요 정보는 아래와 같습니다.
+        * HTTP URL
+        * HTTP Method
+        * 파라미터, 요청 및 응답 데이터, 응답 상태 코드
+    
+      **Note** |
+        해당 요소에 대한 세부 정보는 각 API에 대한 '기능 명세' 섹션에서 
+        설명합니다. 
+        '기능 명세' 섹션에서는 각 API를 사용하여 요청하고 응답 받는 과정에서 정의되어야 하는 데이터 종류, 속성, 타입와 같은 API 세부 사항을 다룹니다.
+
+      **Note** |
+        'API를 요청한다'는 의미는 '클라이언트가 API를 통하여 요청 메시지(요청)를 서버에 전송한다'는 의미와 같습니다. 이 요청에는 서버 측 URL 및 동작, 서버 동작에 필요한 파라미터 정보가 포함됩니다.
+        반대로 서버로부터 받은 응답 메시지(응답)에는 서버 측 처리 결과에 해당하는 응답 데이터 및 상태 코드가 포합됩니다.
+
+
+servers:
+  - url: https://tech-writer-assignment.herokuapp.com
+    description: 토스페이먼츠 API 서버
+  - url: https://api.nuriflex.co.kr/api-server/v1
+    description: NuriFlex API 서버
+  - url: https://search.nuriflex.co.kr/elastic
+    description: Elasticsearch API 서버
+
+
+tags:
+  - name: 결제 API 
+    
+    description: |
+      결제 API는 클라이언트 측 개발자가 결제 관련 기능을 구현하는데 필요한 정보를 얻거나 처리하기 위한 요청과 이에 대한 서버 측 응답을 전달해주는 인터페이스입니다.
+      
+
+  #- name: API Samples
+  #  description: API Samples는 고객이 클라이언트의 결제시스템을 통해 제품을 결제할 때 필요한 요청과 응답을 전달해주는 인터페이스입니다. 
+
+# Paths
+paths:
+  /payments:
+    post:
+      summary: 카드 결제 API
+      tags:
+        - 결제 API
+      description:  |
+        '카드 정보로 결제하기' 기능을 구현할 때 요청하는 API입니다. 인증 토큰과 함께 카드 및 금액 정보를 전송하여 API를 요청하고 서버로부터 결제 처리 결과를 응답 데이터로 받을 수 있습니다.
+
+      requestBody:
+        description: User authentication informations
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest' 
+      responses:
+        '200':
+          description: 전송된 카드 정보로 결제가 성공힘.
+          content:
+            application/json:
+              schema:
+                #type: array #array 타입이 아니므로 items까지 주석처리
+                #items:
+                $ref: '#/components/schemas/APIGroup'
+        '400':
+          description: 전송 시 필수 정보가 누락되어 요청에 실패함.
+          #type: array
+          content:
+            application/json:
+              schema:
+                #example:
+                $ref: '#/components/responses/ReqFail1'       
+        default:
+          description: Unexpected error
+#
+# Components
+components:
+  schemas:
+    APIGroup:
+      type: object
+      description: 결제 처리 정보
+      properties:
+        id:
+          type: string
+          description: 결제 ID
+        result:
+          type: string
+          description: 결제 처리 결과
+        createdAt:
+          type: string
+          # nullable: true
+          description: 결제 처리 결과
+        data:
+          description: API 요청 시 전송 데이터
+          $ref: '#/components/schemas/AuthRequest'
+      example:
+        id: pm__19XJJ02eZvKYlo2ClwuJ1rbA
+        result: SUCCESS
+        createdAt: 2020-03-20T12:03:31.991Z
+    AuthRequest:
+      type: object
+      description: 카드 결제 API 요청에 필요한 정보
+      properties:
+        card:
+          # type: object
+          description: 
+          $ref: '#/components/schemas/UserInfo'
+        amount:
+          type: integer
+          description: 결제 총금액
+        description:
+          type: string
+          description: 결제 대상에 대한 설명
+      required:
+        - card
+        - amount
+      example:
+        amount: 2000
+        description: 맨투맨 구매
+    UserInfo:
+      type: object
+      description: 결제 카드 정보
+      required: true #내부 객체 데이터 모두 필수이므로
+      properties:
+        brand:
+          type: string
+          description: 카드사 명
+        number:
+          type: string
+          description: 카드 번호
+        expiry:
+          type: string
+          description:  카드 유효기간(MMYY)
+        cvc:
+          type: string
+          description: 카드 인증 코드(카드 뒷면 세자리 숫자)
+      # required:
+      #   - dn
+      #   - cn
+      #   - uid
+      example:
+        brand: BC
+        number: 5464650123268072
+        expiry: 1124
+        cvc: 123
+    AuthInfo:
+      type: object
+      description: API 요청 시 전송 데이터
+      properties:
+        card:
+          description: 결제 카드 정보
+          $ref: '#/components/schemas/UserInfo'
+        amount:
+          type: integer
+          description: 결제 총금액
+          example: 2000
+        description:
+          type: string
+          description: 결제 대상 설명
+          example: 맨투맨 구매
+    ReqFail2:
+      type: object
+      description: card.cvc값을 number타입으로 전송하여 요청에 실패한 경우 에러 응답 메시지
+      properties: 
+        result:
+          type: string
+          description: 결제 처리 결과
+          example: FAILED
+        code:
+          type: string
+          description: 에러 코드
+          example: INVALID_PARAMETER
+        message:
+          type: string
+          description: 상세 에러 메시지
+          example: \"card.cvc\"값은 \"string\"타입으로 전송해야 합니다.
+
+  securitySchemes:
+    # NuriFlexAuth:
+    #   type: http
+    #   scheme: basic
+    #   bearerFormat: JWT
+
+    ElasticAuth:
+      type: http
+      scheme: basic
+
+  responses:
+    BadRequest:
+      description: 필수 정보가 누락된 잘못된 요청.
+    UnauthorizedError:
+      description: 인증 받지 못한 상태이거나 잘못된 인증 요청. '/auth'를 먼저 호출해 주세요.
+    Forbidden:
+      description: 권한 없음.
+    NotFound:
+      description: 찾지 못함.
+    ReqFail1:
+      type: object
+      description: amount값을 누락하고 전송하여 요청에 실패한 경우 에러 응답 메시지
+      properties: 
+        result:
+          type: string
+          description: 결제 처리 결과
+          example: FAILED
+        code:
+          type: string
+          description: 에러 코드
+          example: MISSING_PARAMETER
+        message:
+          type: string
+          description: 상세 에러 메시지
+          example: \"amout\"값이 누락되었습니다.
+    ReqFail2:
+      type: object
+      description: card.cvc값을 number타입으로 전송하여 요청에 실패한 경우 에러 응답 메시지
+      properties: 
+        result:
+          type: string
+          description: 결제 처리 결과
+          example: FAILED
+        code:
+          type: string
+          description: 에러 코드
+          example: INVALID_PARAMETER
+        message:
+          type: string
+          description: 상세 에러 메시지
+          example: \"card.cvc\"값은 \"string\"타입으로 전송해야 합니다.
+
+#
+# security
+security:
+  - ElasticAuth: []
