@@ -1,36 +1,114 @@
 openapi: 3.0.0
 info:
   version: '1.0.0'
-  title: 'OpenAPI 가이드'
+  title: '토스페이먼츠 API 가이드'
   description: |
-    [토스페이먼츠](https://www.tosspayments.com/)에서 제공하는 OpenAPIs를 사용하기 위한 가이드입니다.
-
-    **Change History**
-
-      | Version | Date         | Description     | Author      |
-      | :------ | :----------- | :-------------- | :---------- |
-      | 1.0.0   | 2022. 7. 13. | Initial release | Eunjung Kim |
-
-    **본 가이드의 대상 독자** 
-
-      OpenAPI를 사용하는 클라이언트 측 개발자 혹은 사용자 
-
-    **API 개요**
-
-      클라이언트 측 개발자가 API를 요청하고 응답을 받기 위하여 결제 API에서 정의되어야 할 주요 정보는 아래와 같습니다.
-        * HTTP URL
-        * HTTP Method
-        * 파라미터, 요청 및 응답 데이터, 응답 상태 코드
+    <br>
+    <h3>본 문서에 관하여</h3>
+    토스페이먼츠 API 가이드는 [토스페이먼츠](https://www.tosspayments.com/)에서 제공하는 OpenAPI에 대한 정보와 사용법을 설명한 문서입니다.
     
-      **Note** |
-        해당 요소에 대한 세부 정보는 각 API에 대한 '기능 명세' 섹션에서 
-        설명합니다. 
-        '기능 명세' 섹션에서는 각 API를 사용하여 요청하고 응답 받는 과정에서 정의되어야 하는 데이터 종류, 속성, 타입와 같은 API 세부 사항을 다룹니다.
+    <br>
 
-      **Note** |
-        'API를 요청한다'는 의미는 '클라이언트가 API를 통하여 요청 메시지(요청)를 서버에 전송한다'는 의미와 같습니다. 이 요청에는 서버 측 URL 및 동작, 서버 동작에 필요한 파라미터 정보가 포함됩니다.
-        반대로 서버로부터 받은 응답 메시지(응답)에는 서버 측 처리 결과에 해당하는 응답 데이터 및 상태 코드가 포합됩니다.
+    <h4>개정 이력</h4>
+    | Version | Date         | Description     | Author      |
+    | :------ | :----------- | :-------------- | :---------- |
+    | 1.0.0   | 2022. 7. 18. | Initial release | Eunjung Kim |
+    
+    <br>
 
+    
+    <h4>대상 독자</h4>
+    OpenAPI를 사용하는 클라이언트 측 개발자 혹은 사용자 
+    
+    <br>
+
+    <h3>토스페이먼츠 API 소개</h3>
+    토스페이먼츠 API는 토스페이먼츠의 다양한 서비스 및 기능를 클라이언트 개발자 측에서 적용하는데 사용하는 인터페이스입니다. 
+    토스페이먼츠 API는 Representational State Transfer(REST) API 형태로 제공되므로 HTTP 프로토콜을 통하여 클라이언트와 서버인 간의 요청과 응답을 전달하는 방식으로 동작합니다.
+
+    따라서 토스페이먼츠 API 가이드는 클라이언트 측 개발자가 해당 API를 요청하고 응답을 받을수 있도록 아래와 같은 정보를 포함합니다. 
+    * API에 관한 설명: API의 주요 기능
+    * HTTP URL: API를 요청하기 위한 서버 쪽 주소
+    * HTTP Method: API 요청에 대해 서버 측에서 자원을 처리하는 방식. GET(조회), POST(생성), PUT(수정), PATCH(일부 수정), DELETE(삭제)가 있음.
+    * API 요청 시 전송 데이터
+      * 파라미터 및 본문 데이터의 타입
+      * 각 구성 파라미터 및 본문 데이터의 속성, 타입, 설명
+      * 샘플 요청
+    * API 요청 후 서버로부터 받는 응답 데이터:
+      * 본문 데이터의 타입
+      * 각 구성 데이터의 속성, 타입, 설명
+      * 샘플 응답
+      * 각 응답 상태 코드에 대한 설명
+
+    *- Note: 위 정보는 각 API 별 해당 섹션에서 상세히 다룹니다.*      
+
+    *- Note: 'API를 요청한다'는 의미는 '클라이언트가 API를 통하여 요청 메시지(요청)를 서버에 전송한다'는 의미와 같습니다. 이 요청에는 서버 측 URL 및 동작, 전송 파라미터 및 본문 데이터 정보가 포함됩니다.
+    반대로 서버로부터 받은 응답 메시지(응답)에는 서버 측 처리 결과에 해당하는 응답 데이터 및 상태 코드가 포합됩니다.*
+    
+    <br>
+
+    <h3>토스페이먼츠 API 사용해보기</h3>
+    각 API 섹션에 작성된 API 요청 및 응답이 정확하게 동작하는지 확인해볼 수 있습니다. 
+    [**cURL**](https://curl.se/)과 같은 커맨드 라인 기반 데이터 전송 도구를 이용하여 API 요청을 보내고  가이드에 명시된대로 응답이 출력되는지 확인할 수 있습니다. 또는 본 가이드에서 제공하는 `Try it out` 기능을 통해 가이드 페이지에서 샘플 API 요청을 서버로 직접 전송하고 서버로부터의 응답을 바로 확인할 수 있습니다.
+
+    <h4>API 요청 및 응답 개선하기</h4>
+    **cURL**을 이용한 API 요청 및 서버 응답을 확인할 경우 아래의 방법을 통해 요청 및 응답에 대한 에러 없이 보다 명확하게 결과를 확인할 수 있습니다.
+    - 요청 본문 데이터를 작은따옴표`'`로 묶고 구성 줄바꿈 기호로 `\`를 사용하지 않는다.본문 데이터를 큰따옴표 `"`로 묶는 경우 숫자 타입 데이터에 대하여 구분 분석 오류가 발생합니다.
+    - 응답 본문 데이터 가독성을 높이기 위해 요청문 작성 시 **cURL** 옵션인 `-L`을 사용하며, 요청문 맨 끝에 `| jq .` 패키지 명령어를 붙입니다.
+
+      *- Note: `jq` 패키지가 없을 경우 `sudo apt-get install jq` 명령어를 통해 미리 설치합니다.*
+    - **cURL** 옵션인 `-v`을 사용하면 요청에 대한 응답 메시지에서 응답 본문 데이터 뿐만 아니라 요청 및 응답 헤더에 해당하는 데이터도 확인할 수 있습니다. 이 헤더에는 HTTP 메서드, 요청 대상(URL), HTTP 버전, HTTP 상태 코드와 같은 본문 데이터를 제외한 메타 데이터가 포함됩니다.
+
+    *- Note: 위 사항은 **Linux** OS 기준에서 **cURL**을 이용한 API 요청 및 응답 확인을 개선하기 위한 방법입니다.*
+
+    <br>
+
+    <h4>API 샘플 요청 및 응답 확인</h4>
+    **cURL**을 이용한 API 요청은 아래와 같습니다. 
+    ```
+    curl -L -s -v -X 'POST' -H 'Content-Type: application/json' -H 'accept: application/json' 'https://tech-writer-assignment.herokuapp.com/payments' -d '{
+    "card": {
+    "brand": "BC",
+    "number": "5464650123268072",
+    "expiry": "1124",
+    "cvc": "123"
+    },
+    "amount": 2000,
+    "description": "맨투맨 구매"
+    }' | jq .
+    ```
+    *- Note: 위 요청은 **Linux** OS 기준 **cURL**을 이용한 커맨드 라인 명령어입니다. **Linux** OS에는 **cURL**이 기본적으로 설치되어 있어 터미널에서 바로 해당 요청을 보낼 수 있습니다.*
+    
+    **cURL**을 이용한 API 요청에 대한 서버로부터의 응답은 아래와 같습니다.
+    ``` curl
+    < HTTP/1.1 200 OK
+    < Server: Cowboy
+    < Connection: keep-alive
+    < X-Powered-By: Express
+    < Content-Type: application/json; charset=utf-8
+    < Content-Length: 229
+    < Etag: W/"e5-QEIhHt/tIRcHYj/Z4mYoAb/LnJo"
+    < Date: Mon, 18 Jul 2022 11:16:31 GMT
+    < Via: 1.1 vegur
+    <
+    { [229 bytes data]
+    * Connection #0 to host tech-writer-assignment.herokuapp.com left intact
+    {
+      "id": "pm__19XJJ02eZvKYlo2ClwuJ1rbA",
+      "result": "SUCCESS",
+      "createdAt": "2022-07-18T11:16:31.453Z",
+      "data": {
+        "card": {
+          "brand": "BC",
+          "number": "5464650123268072",
+          "expiry": "1124",
+          "cvc": "123"
+        },
+        "amount": 2000,
+        "description": "맨투맨 구매"
+      }
+    }
+    ```
 
 servers:
   - url: https://tech-writer-assignment.herokuapp.com
@@ -59,7 +137,9 @@ paths:
       tags:
         - 결제 API
       description:  |
-        '카드 정보로 결제하기' 기능을 구현할 때 요청하는 API입니다. 인증 토큰과 함께 카드 및 금액 정보를 전송하여 API를 요청하고 서버로부터 결제 처리 결과를 응답 데이터로 받을 수 있습니다.
+        '카드 정보로 결제하기' 기능을 구현할 때 요청하는 API입니다. 카드 및 구매 정보를 본문 데이터로 전송하여 API를 요청하고 서버로부터 결제 처리 결과를 응답 데이터로 받을 수 있습니다.
+
+        본문 데이터 중 `description` 을 제외한 나머지 속성들은 필수로 전송해야 합니다.
 
       requestBody:
         description: User authentication informations
@@ -116,21 +196,38 @@ components:
       description: 카드 결제 API 요청에 필요한 정보
       properties:
         card:
-          # type: object
-          description: 
-          $ref: '#/components/schemas/UserInfo'
+          type: object
+          description: 결제 카드 정보
+          required: true #내부 객체 데이터 모두 필수이므로
+          properties:
+            brand:
+              type: string
+              description: 카드사 명
+              example: BC
+            number:
+              type: string
+              description: 카드 번호
+              example: 5464650123268072
+            expiry:
+              type: string
+              description:  카드 유효기간(MMYY)
+              example: 1124
+            cvc:
+              type: string
+              description: 카드 인증 코드(카드 뒷면 세자리 숫자)
+              example: 123
+              # $ref: '#/components/schemas/UserInfo'
         amount:
           type: integer
           description: 결제 총금액
-        description:
+          example: 2000
+        description:  
           type: string
           description: 결제 대상에 대한 설명
+          example: 맨투맨 구매
       required:
         - card
         - amount
-      example:
-        amount: 2000
-        description: 맨투맨 구매
     UserInfo:
       type: object
       description: 결제 카드 정보
@@ -148,10 +245,6 @@ components:
         cvc:
           type: string
           description: 카드 인증 코드(카드 뒷면 세자리 숫자)
-      # required:
-      #   - dn
-      #   - cn
-      #   - uid
       example:
         brand: BC
         number: 5464650123268072
