@@ -171,7 +171,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthRequest' 
+              $ref: '#/components/schemas/RequestCardInfo' 
       responses:
         '200':
           description: 카드 정보로 결제하기 API 요청에 대하여 결제가 정상적으로 처리됨
@@ -180,25 +180,25 @@ paths:
               schema:
                 #type: array #array 타입이 아니므로 items까지 주석처리
                 #items:
-                $ref: '#/components/schemas/APIGroup'
+                $ref: '#/components/schemas/ResponsePayInfo'
         '400':
           description: 카드 정보로 결제하기 API 요청에 대하여 전송해야할 필수 데이터가 누락되거나 잘못된 데이터 형식으로 요청을 처리할 수 없어 결제에 실패함
           #type: array
           content:
-            - application/json:
+            application/json:
               schema:
-                #example:
-                $ref: '#/components/schemas/ReqFailA'
-                      
-            - application/json:
-              schema:
-                #example:
-                $ref: '#/components/schemas/ReqFailB'      
+                oneOf:
+                - $ref: '#/components/schemas/ReqFailA'
+                - $ref: '#/components/schemas/ReqFailB'    
+              example: 
+                result: 결제 실행 결과
+                code: 에러 코드
+                message: 상세 에러 메시지
 #
 # Components
 components:
   schemas:
-    APIGroup:
+    ResponsePayInfo:
       type: object
       description: 결제 처리 정보
       properties:
@@ -214,12 +214,12 @@ components:
           description: 결제가 처리된 시간
         data:
           description: API 요청 시 전송 데이터
-          $ref: '#/components/schemas/AuthRequest'
+          $ref: '#/components/schemas/RequestCardInfo'
       example:
         id: pm__19XJJ02eZvKYlo2ClwuJ1rbA
         result: SUCCESS
         createdAt: 2020-03-20T12:03:31.991Z
-    AuthRequest:
+    RequestCardInfo:
       type: object
       description: 카드 정보로 결제하기 API 요청 시 전송하는 본문 데이터 속성
       properties:
@@ -256,43 +256,43 @@ components:
       required:
         - card
         - amount
-    UserInfo:
-      type: object
-      description: 결제 카드 정보
-      required: true #내부 객체 데이터 모두 필수이므로
-      properties:
-        brand:
-          type: string
-          description: 카드사 명
-        number:
-          type: string
-          description: 카드 번호
-        expiry:
-          type: string
-          description:  카드 유효 기간(MMYY)
-        cvc:
-          type: string
-          description: 카드 인증 코드(카드 뒷면 세자리 숫자)
-      example:
-        brand: BC
-        number: 5464650123268072
-        expiry: 1124
-        cvc: 123
-    AuthInfo:
-      type: object
-      description: API 요청 시 전송 데이터
-      properties:
-        card:
-          description: 결제 카드 정보
-          $ref: '#/components/schemas/UserInfo'
-        amount:
-          type: integer
-          description: 결제 총금액
-          example: 2000
-        description:
-          type: string
-          description: 결제 대상에 대한 설명
-          example: 토스팀 맨투맨 구매
+    # UserInfo:
+    #   type: object
+    #   description: 결제 카드 정보
+    #   required: true #내부 객체 데이터 모두 필수이므로
+    #   properties:
+    #     brand:
+    #       type: string
+    #       description: 카드사 명
+    #     number:
+    #       type: string
+    #       description: 카드 번호
+    #     expiry:
+    #       type: string
+    #       description:  카드 유효 기간(MMYY)
+    #     cvc:
+    #       type: string
+    #       description: 카드 인증 코드(카드 뒷면 세자리 숫자)
+    #   example:
+    #     brand: BC
+    #     number: 5464650123268072
+    #     expiry: 1124
+    #     cvc: 123
+    # AuthInfo:
+    #   type: object
+    #   description: API 요청 시 전송 데이터
+    #   properties:
+    #     card:
+    #       description: 결제 카드 정보
+    #       $ref: '#/components/schemas/UserInfo'
+    #     amount:
+    #       type: integer
+    #       description: 결제 총금액
+    #       example: 2000
+    #     description:
+    #       type: string
+    #       description: 결제 대상에 대한 설명
+    #       example: 토스팀 맨투맨 구매
     ReqFailA:
       type: object
       description: 요청 본문 데이터 중 `amount` 속성을 누락하고 전송하여 요청에 실패한 경우 에러 응답
